@@ -97,8 +97,8 @@ db.image.belongsTo(db.medium, {
 
 // sync
 db.sequelize
-  .sync({ alter: true })
-  // .sync()
+  // .sync({ alter: true })
+  .sync()
   .then(() => console.log("Database is synced"))
   .catch((err) => console.log(err));
 

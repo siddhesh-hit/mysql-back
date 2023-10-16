@@ -27,15 +27,12 @@ const registerUser = asyncHandler(async (req, res) => {
       user_role_id: user_role_id !== 2 ? 2 : 2 || 2,
     });
 
-    const token = generateToken(res, user.id);
-
     if (user) {
       res.status(201).json({
         id: user.id,
         username: user.username,
         email: user.email,
         user_role_id: user.user_role_id,
-        token,
       });
     } else {
       res.status(400);
@@ -73,6 +70,11 @@ const loginUser = asyncHandler(async (req, res) => {
 
     // console.log(token, "==================>");
 
+    res.cookie("token", token, {
+      withCredentials: true,
+      httpOnly: true,
+    });
+
     res.status(200).json({
       id: checkUser.id,
       username: checkUser.username,
@@ -80,6 +82,17 @@ const loginUser = asyncHandler(async (req, res) => {
       user_role_id: checkUser.user_role_id,
       token,
     });
+  } catch (error) {
+    res.status(400);
+    throw new Error(error);
+  }
+});
+
+// @desc    Logout user
+const logoutUser = asyncHandler(async (req, res) => {
+  try {
+    res.cookie("token", "", { httpOnly: true, expires: new Date(0) });
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     res.status(400);
     throw new Error(error);
@@ -160,6 +173,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  logoutUser,
   getUserProfile,
   getAllUsers,
   updateUserProfile,

@@ -20,19 +20,26 @@ const app = express();
 dotenv.config();
 
 // defining cors and json and cookie
+
+const corsConfig = {
+  origin: true,
+  credentials: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+};
+
+app.use(cors(corsConfig));
+app.options("*", cors(corsConfig));
+
 app.use(cookieParser());
-app.options("*", cors());
 app.use(express.json());
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    maxAge: 600,
-  })
-);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// test get
+app.get("/api/back", (req, res) => {
+  res.json({ message: "Welcome to the backend" });
+});
 
 // defining the routes
 app.use("/api/user", userCredRoutes);
